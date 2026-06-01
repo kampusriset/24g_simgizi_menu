@@ -3,7 +3,7 @@ include '../config/koneksi.php';
 
 $id = $_GET['id'];
 
-$data = mysqli_query($conn, "
+$data = mysqli_query($koneksi, "
 SELECT * FROM kandungan_gizi
 WHERE id_gizi='$id'
 ");
@@ -18,7 +18,7 @@ if(isset($_POST['update'])){
     $lemak        = $_POST['lemak'];
     $karbohidrat  = $_POST['karbohidrat'];
 
-    mysqli_query($conn, "
+    mysqli_query($koneksi, "
     UPDATE kandungan_gizi SET
     id_menu='$id_menu',
     kalori='$kalori',
@@ -49,7 +49,7 @@ if(isset($_POST['update'])){
 <select name="id_menu" required>
 
 <?php
-$menu = mysqli_query($conn, "SELECT * FROM menu_makanan");
+$menu = mysqli_query($koneksi, "SELECT * FROM menu_makanan");
 
 while($m = mysqli_fetch_array($menu)){
 ?>

@@ -3,7 +3,7 @@ include '../config/koneksi.php';
 
 $id = $_GET['id'];
 
-mysqli_query($conn, "
+mysqli_query($koneksi, "
 DELETE FROM kandungan_gizi
 WHERE id_gizi='$id'
 ");
