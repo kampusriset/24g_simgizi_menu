@@ -25,7 +25,7 @@ if(isset($_POST['update'])){
         WHERE id_menu='$id'"
     );
 
-    header("Location: index.php");
+    header("Location: tabel.php");
     exit;
 }
 ?>
@@ -100,7 +100,7 @@ if(isset($_POST['update'])){
                     Update
                 </button>
 
-                <a href="index.php"
+                <a href="tabel.php"
                    class="btn btn-secondary">
 
                     Kembali

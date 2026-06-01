@@ -10,5 +10,5 @@ mysqli_query(
      WHERE id_menu='$id'"
 );
 
-header("Location: index.php");
+header("Location: tabel.php");
 exit;
