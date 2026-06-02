@@ -1,12 +1,7 @@
-<?php
-session_start();
-require_once __DIR__ ."/../config/koneksi.php";
-if (!isset($_SESSION['username'])) {
-    header("Location: ../view/login.php");
-    exit;
-}
 
-include '../config/koneksi.php';
+<?php
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../config/koneksi.php';
 
 // Total Menu
 $totalMenu = mysqli_num_rows(
@@ -18,23 +13,23 @@ $totalGizi = mysqli_num_rows(
     mysqli_query($koneksi, "SELECT * FROM kandungan_gizi")
 );
 
-// Data Menu Terbaru
-$menuQuery = mysqli_query(
+// Data Dashboard (Join Menu + Gizi)
+$dashboardQuery = mysqli_query(
     $koneksi,
-    "SELECT * FROM menu_makanan
-    ORDER BY id_menu DESC
-    LIMIT 5"
-);
-
-// Data Gizi Terbaru
-$giziQuery = mysqli_query(
-    $koneksi,
-    "SELECT kg.*, mm.nama_menu
-    FROM kandungan_gizi kg
-    LEFT JOIN menu_makanan mm
-    ON kg.id_menu = mm.id_menu
-    ORDER BY kg.id_gizi DESC
-    LIMIT 5"
+    "SELECT
+        mm.id_menu,
+        mm.nama_menu,
+        mm.jenis,
+        mm.tanggal_menu,
+        kg.kalori,
+        kg.protein,
+        kg.lemak,
+        kg.karbohidrat
+    FROM menu_makanan mm
+    LEFT JOIN kandungan_gizi kg
+        ON mm.id_menu = kg.id_menu
+    ORDER BY mm.id_menu DESC
+    LIMIT 10"
 );
 ?>
 
@@ -47,12 +42,45 @@ $giziQuery = mysqli_query(
 <title>Dashboard SIM GIZI</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link href="../assets/style.css" rel="stylesheet">
 
 <style>
+body{
+    background:#f8faf8;
+}
+
+.welcome-card{
+    background:linear-gradient(135deg,#198754,#20c997);
+    color:white;
+    border:none;
+    border-radius:20px;
+}
+
+.stat-card{
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+}
+
+.gradient-green{
+    background:linear-gradient(135deg,#198754,#20c997);
+    color:white;
+}
+
+.gradient-blue{
+    background:linear-gradient(135deg,#0d6efd,#4dabf7);
+    color:white;
+}
+
 .dashboard-card{
     border:none;
-    border-radius:15px;
+    border-radius:20px;
     transition:.3s;
 }
 
@@ -68,7 +96,7 @@ $giziQuery = mysqli_query(
     align-items:center;
     justify-content:center;
     margin:auto;
-    font-size:35px;
+    font-size:32px;
     color:white;
 }
 
@@ -80,20 +108,30 @@ $giziQuery = mysqli_query(
     background:#0d6efd;
 }
 
-.welcome-card{
-    background:linear-gradient(
-        135deg,
-        #198754,
-        #20c997
-    );
-    color:white;
+.glass-card{
+    background:white;
+    border:none;
     border-radius:20px;
 }
 
-.stat-number{
-    font-size:35px;
-    font-weight:bold;
-    color:#198754;
+.badge-menu{
+    background:#198754;
+    color:white;
+    padding:8px 14px;
+    border-radius:50px;
+}
+
+.table thead{
+    background:#198754;
+    color:white;
+}
+
+.table tbody tr:hover{
+    background:#f5fff8;
+}
+
+.navbar{
+    border-radius:0 0 15px 15px;
 }
 </style>
 
@@ -105,17 +143,17 @@ $giziQuery = mysqli_query(
     <div class="container">
 
         <a class="navbar-brand fw-bold">
-            SIM GIZI
+            MENU BERGIZI SEKOLAH
         </a>
 
         <div class="ms-auto">
 
             <span class="text-white me-3">
+                <i class="bi bi-person-circle"></i>
                 <?= $_SESSION['username']; ?>
             </span>
 
-            <a href="./logout.php"
-               class="btn btn-light btn-sm">
+            <a href="logout.php" class="btn btn-light btn-sm">
                 Logout
             </a>
 
@@ -132,7 +170,9 @@ $giziQuery = mysqli_query(
 
         <div class="card-body p-4">
 
-            <h3>Dashboard SIM GIZI</h3>
+            <h2 class="fw-bold">
+                Selamat Datang, <?= $_SESSION['username']; ?>
+            </h2>
 
             <p class="mb-0">
                 Sistem Informasi Menu Bergizi Sekolah
@@ -145,17 +185,17 @@ $giziQuery = mysqli_query(
     <!-- Statistik -->
     <div class="row mb-4">
 
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3">
 
-            <div class="card shadow text-center">
+            <div class="card stat-card gradient-green shadow">
 
                 <div class="card-body">
 
-                    <h5>Total Menu Makanan</h5>
+                    <h6>Total Menu Makanan</h6>
 
-                    <div class="stat-number">
+                    <h1 class="fw-bold">
                         <?= $totalMenu ?>
-                    </div>
+                    </h1>
 
                 </div>
 
@@ -163,17 +203,17 @@ $giziQuery = mysqli_query(
 
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3">
 
-            <div class="card shadow text-center">
+            <div class="card stat-card gradient-blue shadow">
 
                 <div class="card-body">
 
-                    <h5>Total Data Gizi</h5>
+                    <h6>Total Data Gizi</h6>
 
-                    <div class="stat-number text-primary">
+                    <h1 class="fw-bold">
                         <?= $totalGizi ?>
-                    </div>
+                    </h1>
 
                 </div>
 
@@ -186,14 +226,14 @@ $giziQuery = mysqli_query(
     <!-- Shortcut -->
     <div class="row mb-4">
 
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3">
 
             <div class="card dashboard-card shadow">
 
                 <div class="card-body text-center p-4">
 
                     <div class="icon-circle icon-menu mb-3">
-                        🍱
+                        <i class="bi bi-egg-fried"></i>
                     </div>
 
                     <h4>Menu Makanan</h4>
@@ -203,7 +243,7 @@ $giziQuery = mysqli_query(
                     </p>
 
                     <a href="../menu/tabel.php"
-                       class="btn btn-primary">
+                       class="btn btn-success">
 
                         Buka Modul
 
@@ -215,14 +255,14 @@ $giziQuery = mysqli_query(
 
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3">
 
             <div class="card dashboard-card shadow">
 
                 <div class="card-body text-center p-4">
 
                     <div class="icon-circle icon-gizi mb-3">
-                        🥗
+                        <i class="bi bi-heart-pulse"></i>
                     </div>
 
                     <h4>Kandungan Gizi</h4>
@@ -246,131 +286,81 @@ $giziQuery = mysqli_query(
 
     </div>
 
-    <!-- Tabel Menu -->
-    <div class="card shadow mb-4">
+    <!-- Data Gabungan -->
+    <div class="card glass-card shadow">
 
-        <div class="card-header">
-            Data Menu Makanan Terbaru
+        <div class="card-header bg-success text-white fw-bold">
+            Data Menu dan Kandungan Gizi Terbaru
         </div>
 
         <div class="card-body">
 
-            <table class="table table-bordered table-hover">
+            <div class="table-responsive">
 
-                <thead class="table-dark">
+                <table class="table table-hover align-middle">
 
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama Menu</th>
-                        <th>Jenis</th>
-                        <th>Tanggal Menu</th>
-                    </tr>
+                    <thead>
 
-                </thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Menu</th>
+                            <th>Jenis</th>
+                            <th>Kalori</th>
+                            <th>Protein</th>
+                            <th>Lemak</th>
+                            <th>Karbohidrat</th>
+                        </tr>
 
-                <tbody>
+                    </thead>
 
-                <?php if(mysqli_num_rows($menuQuery) > 0): ?>
+                    <tbody>
 
-                    <?php while($menu = mysqli_fetch_assoc($menuQuery)): ?>
+                    <?php if(mysqli_num_rows($dashboardQuery) > 0): ?>
 
-                    <tr>
+                        <?php while($row = mysqli_fetch_assoc($dashboardQuery)): ?>
 
-                        <td><?= $menu['id_menu']; ?></td>
+                        <tr>
 
-                        <td><?= $menu['nama_menu']; ?></td>
+                            <td><?= $row['id_menu']; ?></td>
 
-                        <td><?= $menu['jenis']; ?></td>
+                            <td>
+                                <strong>
+                                    <?= $row['nama_menu']; ?>
+                                </strong>
+                            </td>
 
-                        <td><?= $menu['tanggal_menu']; ?></td>
+                            <td>
+                                <span class="badge-menu">
+                                    <?= $row['jenis']; ?>
+                                </span>
+                            </td>
 
-                    </tr>
+                            <td><?= $row['kalori'] ?? '-'; ?> kkal</td>
+                            <td><?= $row['protein'] ?? '-'; ?> gr</td>
+                            <td><?= $row['lemak'] ?? '-'; ?> gr</td>
+                            <td><?= $row['karbohidrat'] ?? '-'; ?> gr</td>
 
-                    <?php endwhile; ?>
+                        </tr>
 
-                <?php else: ?>
+                        <?php endwhile; ?>
 
-                    <tr>
+                    <?php else: ?>
 
-                        <td colspan="4" class="text-center">
-                            Belum ada data menu makanan
-                        </td>
+                        <tr>
 
-                    </tr>
+                            <td colspan="7" class="text-center">
+                                Belum ada data menu dan gizi
+                            </td>
 
-                <?php endif; ?>
+                        </tr>
 
-                </tbody>
+                    <?php endif; ?>
 
-            </table>
+                    </tbody>
 
-        </div>
+                </table>
 
-    </div>
-
-    <!-- Tabel Gizi -->
-    <div class="card shadow">
-
-        <div class="card-header">
-            Data Kandungan Gizi Terbaru
-        </div>
-
-        <div class="card-body">
-
-            <table class="table table-bordered table-hover">
-
-                <thead class="table-dark">
-
-                    <tr>
-                        <th>ID Gizi</th>
-                        <th>Menu</th>
-                        <th>Kalori</th>
-                        <th>Protein</th>
-                        <th>Lemak</th>
-                        <th>Karbohidrat</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                <?php if(mysqli_num_rows($giziQuery) > 0): ?>
-
-                    <?php while($gizi = mysqli_fetch_assoc($giziQuery)): ?>
-
-                    <tr>
-
-                        <td><?= $gizi['id_gizi']; ?></td>
-
-                        <td><?= $gizi['nama_menu']; ?></td>
-
-                        <td><?= $gizi['kalori']; ?> kkal</td>
-
-                        <td><?= $gizi['protein']; ?> gr</td>
-
-                        <td><?= $gizi['lemak']; ?> gr</td>
-
-                        <td><?= $gizi['karbohidrat']; ?> gr</td>
-
-                    </tr>
-
-                    <?php endwhile; ?>
-
-                <?php else: ?>
-
-                    <tr>
-
-                        <td colspan="6" class="text-center">
-                            Belum ada data kandungan gizi
-                        </td>
-
-                    </tr>
-
-                <?php endif; ?>
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
@@ -380,3 +370,4 @@ $giziQuery = mysqli_query(
 
 </body>
 </html>
+
