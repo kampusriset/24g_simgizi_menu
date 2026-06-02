@@ -42,8 +42,12 @@ if(isset($_POST['login'])){
 
 <style>
 body{
-    background: url("https://scontent-cgk2-1.xx.fbcdn.net/v/t39.30808-6/471657498_122097124856703521_3649779445354297923_n.png?_nc_cat=106&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeEh19aYsaVWo744a4imCqCXf7gdVHKtC0J_uB1Ucq0LQrfd5qRP7T5eTQ69sqt9PHgg7N7XQMAm-MVKYyzwQyig&_nc_ohc=fzmwLW3AVsIQ7kNvwH36J0Y&_nc_oc=AdoWKKDPGCy4KcGf0CMtVDjMrgxmmuIBxI3QsYf-21oKrL0bZhfjnnSSUy223jLOzV0&_nc_zt=23&_nc_ht=scontent-cgk2-1.xx&_nc_gid=UhQXNTUCUd7JzTRtr_9dbw&_nc_ss=7b2a8&oh=00_Af9Xl_1yogVXQVfPckVOyErqgyitQS-eetyZtPctlSdH_g&oe=6A232AE1");
-    background-size: cover;
+   background: linear-gradient(
+        135deg,
+        #e8f5e9 0%,
+        #c8e6c9 50%,
+        #81c784 100%
+    );
 }
 </style>
 
