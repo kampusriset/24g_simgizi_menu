@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../config/koneksi.php';
+require_once __DIR__ ."/../config/koneksi.php";
 
 $error = "";
 
@@ -20,7 +20,7 @@ if(isset($_POST['login'])){
 
         $_SESSION['username'] = $user['username'];
 
-        header("Location: ../menu/tabel.php");
+        header("Location: ../view/dashboard.php");
         exit;
 
     }else{

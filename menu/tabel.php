@@ -1,5 +1,5 @@
 <?php
-include '../config/koneksi.php';
+require_once __DIR__ ."/../config/koneksi.php";
 
 $query = mysqli_query($koneksi, "SELECT * FROM menu_makanan");
 ?>
